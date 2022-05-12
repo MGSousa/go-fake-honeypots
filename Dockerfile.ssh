@@ -1,0 +1,9 @@
+FROM golang:1.18
+
+WORKDIR /app
+
+COPY . /app
+
+RUN go build ./sshd.go
+
+CMD ["./sshd"]
