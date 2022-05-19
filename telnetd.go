@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"net"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -22,7 +23,13 @@ func floatToString(input_num float64) string {
 }
 
 func main() {
-	f, err := os.OpenFile("fh-telnet.log", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+	ex, err := os.Executable()
+	if err != nil {
+		log.Fatal(err)
+	}
+	basePath := filepath.Dir(ex)
+
+	f, err := os.OpenFile(fmt.Sprintf("%s/fh-telnet.log", basePath), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}

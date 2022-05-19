@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"syscall"
 	"unsafe"
 
@@ -23,7 +24,13 @@ func setWinsize(f *os.File, w, h int) {
 }
 
 func main() {
-	f, err := os.OpenFile("fh-ssh.log", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+	ex, err := os.Executable()
+	if err != nil {
+		log.Fatal(err)
+	}
+	basePath := filepath.Dir(ex)
+
+	f, err := os.OpenFile(fmt.Sprintf("%s/fh-ssh.log", basePath), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -32,7 +39,7 @@ func main() {
 	log.SetOutput(f)
 
 	ssh.Handle(func(s ssh.Session) {
-		cmd := exec.Command("./fshell")
+		cmd := exec.Command(fmt.Sprintf("%s/fshell", basePath))
 		ptyReq, winCh, isPty := s.Pty()
 		if isPty {
 			cmd.Env = append(cmd.Env, fmt.Sprintf("TERM=%s", ptyReq.Term))

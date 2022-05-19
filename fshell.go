@@ -7,6 +7,7 @@ import (
 	"log"
 	"math/rand"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -111,7 +112,14 @@ func cat(command string) {
 
 func main() {
 	var cmd string
-	f, err := os.OpenFile("fh-shell.log", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+
+	ex, err := os.Executable()
+	if err != nil {
+		log.Fatal(err)
+	}
+	basePath := filepath.Dir(ex)
+
+	f, err := os.OpenFile(fmt.Sprintf("%s/fh-shell.log", basePath), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
