@@ -6,7 +6,7 @@ Simple honeypots for SSH and Telnet with a fake Shell (can be extended)
 
 > Clone repo
 ```sh
-git clone https://github.com/MGSousa/goFakeHoneypots.git && cd goFakeHoneypots
+git clone https://github.com/MGSousa/go-fake-honeypots.git && cd go-fake-honeypots
 ```
 
 > Build Go binaries

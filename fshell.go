@@ -21,11 +21,10 @@ func ping(command string) {
 	if strings.Contains(cmd, "ping") {
 		result := strings.Split(cmd, " ")
 		host := result[1]
-		//fmt.Println(result[0])
-		//fmt.Println(result[1])
+
 		fmt.Printf("PING %v (%[1]v) 56(84) bytes of data.\n", host)
 		for i := 0; i < 4; i++ {
-			time.Sleep(2 * time.Second)
+			time.Sleep(1 * time.Second)
 			time_ping := floatToString((rand.Float64() * 10) + 20)
 			ttl := strconv.Itoa((rand.Intn(5) * 10))
 			fmt.Printf("64 bytes from %v: icmp_seq=%v ttl=%v time=%.2v ms\n", host, i, ttl, time_ping)
@@ -70,14 +69,16 @@ func ls(command string) {
 		"dev   initrd.img  lib64           mnt         proc        sbin  sys   usr       vmlinuz.old"
 	cmd := command
 	if cmd == "ls" {
-		fmt.Println("data export2.csv start-up.sh")
+		fmt.Println("docker-init.sh flag.txt.enc")
 	} else {
 		result := strings.Split(cmd, " ")
 		dir_file := result[1]
-		//fmt.Println(result[0])
-		//fmt.Println(result[1])
-		if dir_file == "/root" || dir_file == "/" {
+
+		if dir_file == "/" {
 			fmt.Println(fake_fs)
+		}
+		if dir_file == "/root" {
+			fmt.Println("docker-init.sh flag.txt.enc")
 		}
 		if dir_file == "/etc" {
 			fmt.Println(etc)
@@ -92,15 +93,17 @@ func cat(command string) {
 		return
 	}
 	file := result[1]
-	s := []string{"fake_files/", file}
+	s := []string{"root/", file}
 	file_path := strings.Join(s, "")
-	if file == "data" || file == "export2.csv" || file == "start-up.sh" {
+	if file == "docker-init.sh" {
 		b, err := ioutil.ReadFile(file_path) // just pass the file name
 		if err != nil {
 			fmt.Print(err)
 		}
 
 		fmt.Println(string(b))
+	} else if file == "flag.txt.enc" {
+		fmt.Println(file, ": openssl enc'd data with salted password")
 	} else {
 		fmt.Println("File not found")
 	}
@@ -108,7 +111,7 @@ func cat(command string) {
 
 func main() {
 	var cmd string
-	f, err := os.OpenFile("fh-ssh.log", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+	f, err := os.OpenFile("fh-shell.log", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -117,7 +120,7 @@ func main() {
 	//set output of logs to f
 	log.SetOutput(f)
 
-	shell := "root@web-1:# "
+	shell := "root@ctw-portugal:# "
 	logged := true
 	ifconfig := "ens3      Link encap:Ethernet  HWaddr fa:16:3e:ea:69:d3\n" +
 		"          inet addr:192.168.0.3  Bcast:192.168.0.255  Mask:255.255.255.0\n" +
